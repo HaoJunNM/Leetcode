@@ -1,0 +1,40 @@
+class Solution(object):
+    """
+    There is no need to first list all the possible permutations and then find the required one, 
+    my idea is first find the where is the right position step by step and add the number at each time
+    """
+    def getPermutation(self, n, k):
+            """
+            :type n: int
+            :type k: int
+            :rtype: str
+            """
+            l = [i for i in range(1,n+1)]
+            a = []
+            if k == 1:
+                return ''.join(map(str, l))
+            def findpermt(n,k,l,a):
+                num = 1
+                for i in range(1,len(l)):
+                    num = num*i
+                remainder = k%num
+                divisor = k//num
+                if remainder==0:
+                    a.append(l[divisor-1])
+                    del l[divisor-1]
+                    for j in reversed(l):
+                        a.append(j)
+                    return ''.join(map(str, a))
+                else:
+                    if divisor == num == 1:
+                        for j in l:
+                            a.append(j)
+                        return ''.join(map(str, a))
+                    else:
+                        a.append(l[divisor])
+                        del l[divisor]
+
+                findpermt(n-1,remainder,l,a)
+                return ''.join(map(str, a))
+            a = findpermt(n,k,l,a)
+            return ''.join(map(str, a))
