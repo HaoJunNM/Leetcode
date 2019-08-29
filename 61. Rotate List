@@ -1,0 +1,38 @@
+# Definition for singly-linked list.
+# class ListNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+"""
+pay attentation to the last node, it should point to the first one and become the new first one. 
+incase the k is too large to get a TLE error, calculate the length of linked num list and remainder k%num at the first rotate
+"""
+
+class Solution(object):
+    def rotateRight(self, head, k):
+        """
+        :type head: ListNode
+        :type k: int
+        :rtype: ListNode
+        """
+        num = 1
+        sgnl = 1
+        if not head:
+            return None
+        if head.next is None:
+            return head
+        while k>0:
+            start = head
+            while head.next.next is not None:
+                head = head.next
+                num+=1
+            a = head.next
+            num+=1
+            head.next = None
+            a.next = start
+            head = a
+            k-=1
+            if sgnl == 1:
+                k = k%num
+            sgnl+=1
+        return head
