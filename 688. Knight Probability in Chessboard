@@ -1,0 +1,107 @@
+"""
+Approach #1: Dynamic Programming [Accepted]
+Intuition and Algorithm
+Let f[r][c][steps] be the probability of being on square (r, c) after steps steps. 
+Based on how a knight moves, we have the following recursion:
+f[r][c][steps] = \sum_{dr, dc} f[r+dr][c+dc][steps-1] / 8.0f[r][c][steps]=∑dr,dc f[r+dr][c+dc][steps−1]/8.0
+where the sum is taken over the eight (dr, dc)(dr,dc) pairs 
+(2, 1),(2,1), (2, -1),(2,−1), (-2, 1),(−2,1), (-2, -1),(−2,−1), (1, 2),(1,2), (1, -2),(1,−2), (-1, 2),(−1,2), (-1, -2)(−1,−2).
+Instead of using a three-dimensional array f, we will use two two-dimensional ones dp and dp2, 
+storing the result of the two most recent layers we are working on. dp2 will represent f[][][steps], and dp will represent f[][][steps-1].
+"""
+class Solution(object):
+    def knightProbability(self, N, K, r, c):
+        dp = [[0] * N for _ in xrange(N)]
+        dp[r][c] = 1
+        for _ in xrange(K):
+            dp2 = [[0] * N for _ in xrange(N)]
+            for r, row in enumerate(dp):
+                for c, val in enumerate(row):
+                    for dr, dc in ((2,1),(2,-1),(-2,1),(-2,-1),
+                                   (1,2),(1,-2),(-1,2),(-1,-2)):
+                        if 0 <= r + dr < N and 0 <= c + dc < N:
+                            dp2[r+dr][c+dc] += val / 8.0
+            dp = dp2
+
+        return sum(map(sum, dp))
+        
+ """
+ interesting DFS solution
+ https://leetcode.com/problems/knight-probability-in-chessboard/discuss/143583/Python-short-and-simple-DFS-w-memoization
+ """
+ class Solution: 
+    def knightProbability(self, N, K, r, c):
+        memo = {}
+        moves = ((-1, -2), (-2, -1), (-2, 1), (-1, 2), (1, 2), (2, 1), (2, -1), (1, -2))
+        def dfs(k, x, y, P):
+            p = 0
+            if 0 <= x < N and 0 <= y < N: #a valid position on the board
+                if k < K:
+                    for dx, dy in moves:
+                        x_next, y_next = x + dx, y + dy
+                        if (x_next, y_next, k+1) not in memo:
+                            memo[(x_next, y_next, k+1)] = dfs(k+1, x_next, y_next, P/8)
+                        p += memo[(x_next, y_next, k+1)]
+                else: # k==K, this is the last move
+                    p = P
+            return p
+        return dfs(0, r, c, 1.0)
+        
+"""
+2nd quickest BFS solution
+https://leetcode.com/problems/knight-probability-in-chessboard/discuss/214232/Easy-Python-BFS-like-DP-168ms-super-fast-without-tricks-with-detailed-explanation.
+"""
+class Solution(object):
+    def knightProbability(self, N, K, r, c):
+        """
+        :type N: int
+        :type K: int
+        :type r: int
+        :type c: int
+        :rtype: float
+        """
+        # O(K*n^2) worst case, keep adding the probability of getting out of the board.
+        moves = [(1,2),(-1,2),(1,-2),(-1,-2),(2,1),(2,-1),(-2,1),(-2,-1)]
+        memo, out_board_p = {(r, c): 1}, 0
+        # for each step we will create a new dict to record the onboard coordinates and their probabilities.
+        for step in range(K):
+            next_memo = collections.defaultdict(int)
+            for (i, j), prob in memo.items():
+                for d in moves:
+                    di, dj = i+d[0], j+d[1]
+                    # if the next step is on the board, we record it for next step's calculation
+                    if 0<=di<N and 0<=dj<N:
+                        next_memo[(di,dj)] += prob * 0.125
+                    # if the next step is not on the board, we sum it to our accumulate probability of out-board.
+                    else:
+                        out_board_p += prob * 0.125
+            memo = next_memo
+        # the on-board prob = 1 - the accumulate out board prob
+        return 1-out_board_p
+      
+   
+   
+  
+ """
+ qucikest DFS and memoization
+ """
+ class Solution:
+    def knightProbability(self, N, K, r, c):        
+        pr = [[[0] * K for j in range(N)] for i in range(N)]
+        def probab(N, K, r, c):
+            if K == 0:
+                return 1
+            elif pr[r][c][K - 1] > 0:
+                return pr[r][c][K - 1]
+            p = 0
+            for move in [[1, 2], [2, 1], [-1, 2], [-2, 1], [-1, -2], [-2, -1], [1, -2], [2, -1]]:
+                rr, cc = r + move[0], c + move[1]
+                if -1 < rr < N and -1 < cc < N:
+                    p += 0.125 * probab(N, K - 1, rr, cc)
+            pr[r][c][K - 1], pr[c][r][K - 1] = p, p
+            pr[r][N - 1 - c][K - 1], pr[c][N - 1 - r][K - 1] = p, p
+            pr[N - 1 - r][c][K - 1], pr[N - 1 - c][r][K - 1] = p, p
+            pr[N - r - 1][N - c - 1][K - 1], pr[N - c - 1][N - r - 1][K - 1] = p, p
+            return p
+        p = probab(N, K, r, c)
+        return p
