@@ -1,0 +1,44 @@
+"""
+N-Queens problem is a typical application of backtracking algorithm. For backtracking, 
+we need to figure out a way to represent the candidates, 
+a way to generate all the possible candidates and accept those valid and reject those invalid.
+In this solution, the representation of the candidate is a column vector "queens", where i = queen[j] is 
+the column index of the queen in row j. Under this representation, 
+the way to generate all candidates is just like generate all the permutation of vector [0...n-1].
+
+Now the rest problem is to efficiently verify the candidate. By definition, 
+two queens cannot be in the same row or same column or same back or forward slash lines. 
+Our representation is already making sure there would never be two queens in a row. 
+Therefore we only need 3 dynamic sets to maintain the currently available column, back and forward slash lines.
+
+(1) The id of a column is its index range from 0 to n-1.
+
+(2) The id of a back slash line "" is "col - row" or "x - y"
+
+(3) The id of a forward slash line "/" is "col + row" or "x + y"
+
+This way we can reject a candidate in O(1) time since we can use three hash tables or three boolean arrays as the dynamic sets we need.
+"""
+def solveNQueens(self, n):
+    ans = []
+    queens = [-1] * n
+    columns = [True] * n + [False]  # || col with dummy for boundary
+    back = [True] * n * 2  # \\ col - row
+    forward = [True] * n * 2  # // col + row
+    row = col = 0
+    while True:
+        if columns[col] and back[col - row + n] and forward[col + row]:
+            queens[row] = col
+            columns[col] = back[col - row + n] = forward[col + row] = False
+            row += 1
+            col = 0
+            if row == n:
+                ans.append(['.' * q + 'Q' + '.' * (n - q - 1) for q in queens])
+        else:
+            if row == n or col == n:
+                if row == 0:
+                    return ans
+                row -= 1
+                col = queens[row]
+                columns[col] = back[col - row + n] = forward[col + row] = True
+            col += 1
