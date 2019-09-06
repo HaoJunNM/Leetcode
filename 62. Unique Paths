@@ -39,7 +39,7 @@ The total number of movements of the robot is S=m+n-2, and the number of downwar
 Then the problem can be seen as the number of combinations of D positions taken from S. 
 The solution to this problem is C(S, D).
 """
- # math C(m+n-2,n-1)
+ # math C(n-1,m+n-2)
 class Solution(object):
     def uniquePaths(self, m, n):
         """
