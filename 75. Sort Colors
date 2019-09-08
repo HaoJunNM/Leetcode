@@ -1,0 +1,72 @@
+"""
+bubble sort
+Runtime: 32 ms
+Memory Usage: 11.7 MB
+"""
+class Solution(object):
+    def sortColors(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: None Do not return anything, modify nums in-place instead.
+        """
+        if not nums:
+            return []
+        swap = 1
+        while swap:
+            swap = 0
+            for i in range(len(nums)-1):
+                if nums[i]>nums[i+1]:
+                    nums[i],nums[i+1] = nums[i+1],nums[i]
+                    swap = 1
+
+"""
+two pass
+Runtime: 8 ms, faster than 99.61% of Python online submissions for Sort Colors.
+Memory Usage: 11.7 MB, less than 64.10% of Python online submissions for Sort Colors.
+"""
+class Solution(object):
+    def sortColors(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: None Do not return anything, modify nums in-place instead.
+        """
+        a = 0
+        b = 0
+        c = 0
+        for i in nums:
+            if i == 0:
+                a+=1
+            elif i == 1:
+                b+=1
+            else:
+                c+=1
+        for i in range(len(nums)):
+            if i<a:
+                nums[i] = 0
+            elif a<=i<a+b:
+                nums[i] = 1
+            else:
+                nums[i] = 2
+                
+"""
+Dutch national flag problem
+https://en.wikipedia.org/wiki/Dutch_national_flag_problem
+"""
+class Solution:
+    def sortColors(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: void Do not return anything, modify nums in-place instead.
+        """
+        p1, p2 = 0, len(nums) - 1
+        p = 0
+        while p <= p2:
+            if nums[p] < 1:
+                nums[p], nums[p1] = nums[p1], nums[p]
+                p1 += 1
+                p += 1
+            elif nums[p] > 1:
+                nums[p], nums[p2] = nums[p2], nums[p]
+                p2 -= 1
+            else:
+                p += 1
