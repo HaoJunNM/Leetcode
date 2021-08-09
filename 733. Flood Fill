@@ -1,0 +1,22 @@
+class Solution(object):
+    def floodFill(self, image, sr, sc, newColor):
+        """
+        :type image: List[List[int]]
+        :type sr: int
+        :type sc: int
+        :type newColor: int
+        :rtype: List[List[int]]
+        """
+        oldColor = image[sr][sc]
+        if newColor == oldColor:
+            return image
+        stack = []
+        stack.append((sr, sc))
+        while stack:
+            r,c = stack.pop()
+            if image[r][c] == oldColor:
+                image[r][c] = newColor
+            for dr, dc in (1,0),(-1,0),(0,1),(0,-1):
+                if 0<=r+dr<len(image) and 0<=c+dc<len(image[0]) and image[r+dr][c+dc]==oldColor:
+                    stack.append((r+dr,c+dc))
+        return image
