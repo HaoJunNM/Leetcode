@@ -1,0 +1,28 @@
+class Solution(object):
+    def decodeString(self, s):
+        """
+        :type s: str
+        :rtype: str
+        """
+        stack = []
+        for i in range(len(s)):
+            if s[i] != "]":
+                stack.append(s[i])
+            else:
+                self.helper(stack)
+        return ''.join(stack)
+    def helper(self, stack):
+        tem = []
+        num = []
+        while True:
+            while stack and stack[-1] != "[":
+                tem.append(stack.pop())
+            if stack[-1] == "[":
+                stack.pop()
+            while stack and stack[-1].isdigit():
+                num.append(stack.pop())
+            k = int(''.join(reversed(num)))
+            tem = k*tem
+            while tem:
+                stack.append(tem.pop())
+            return stack
