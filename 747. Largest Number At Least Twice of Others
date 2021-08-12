@@ -1,0 +1,15 @@
+class Solution(object):
+    def dominantIndex(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
+        if len(nums)<2:
+            return 0
+        array  = nums[:]
+        array.sort()
+        if array[-1]==0:
+            return -1
+        if array[-2]==0:
+            return nums.index(array[-1])
+        return nums.index(array[-1]) if (array[-1]/array[-2])>=2 else -1
