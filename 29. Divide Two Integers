@@ -1,0 +1,36 @@
+class Solution(object):
+    def divide(self, dividend, divisor):
+        """
+        :type dividend: int
+        :type divisor: int
+        :rtype: int
+        """
+        sign = 1
+        if divisor<0 and dividend>0 or divisor>0 and dividend<0:
+            sign = -1
+        dividend = abs(dividend)
+        divisor = abs(divisor)
+        if dividend<divisor:
+            return 0
+        candidates = [divisor]
+        times = [1]
+        i = divisor
+        while i < dividend:
+            i = candidates[-1] + candidates[-1]
+            candidates.append(i)
+            times.append(times[-1]+times[-1])
+        pos = len(candidates) - 1
+        time = 0
+        while dividend>=divisor:
+            for j in range(pos,-1,-1):
+                if dividend>=candidates[j]:
+                    dividend -= candidates[j]
+                    time += times[j]
+                    break
+                else:
+                    pos -= 1
+                    break
+        if sign<0:
+            time = -time
+        return max(-2**31,min(2**31-1,time))
+            
